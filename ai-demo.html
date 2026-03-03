@@ -260,13 +260,14 @@
 
         .size {
             font-weight: 600;
+            color: #3182ce;
         }
 
-        .size.original {
+        .size.bigger {
             color: #e53e3e;
         }
 
-        .size.optimized {
+        .size.smaller {
             color: #38a169;
         }
 
@@ -513,6 +514,7 @@
             displayOptimizedImage(blob) {
                 const optimizedImg = document.getElementById('optimizedImage');
                 const placeholder = document.getElementById('imagePlaceholder');
+                const optimizedSizeElement = document.querySelector('.size.optimized');
                 const url = URL.createObjectURL(blob);
                 
                 optimizedImg.src = url;
@@ -523,6 +525,14 @@
                 
                 document.getElementById('optimizedDimensions').textContent = `${this.canvas.width} × ${this.canvas.height}`;
                 document.getElementById('optimizedSize').textContent = this.formatFileSize(blob.size);
+                
+                // Update optimized size color based on comparison
+                optimizedSizeElement.classList.remove('bigger', 'smaller');
+                if (blob.size > this.currentFile.size) {
+                    optimizedSizeElement.classList.add('bigger');
+                } else if (blob.size < this.currentFile.size) {
+                    optimizedSizeElement.classList.add('smaller');
+                }
                 
                 const reduction = ((this.currentFile.size - blob.size) / this.currentFile.size * 100).toFixed(1);
                 document.getElementById('reduction').textContent = `${reduction}% smaller`;
