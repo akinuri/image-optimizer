@@ -53,30 +53,14 @@
         }
 
         .upload-section {
-            text-align: center;
             margin-bottom: 30px;
         }
 
-        .drop-area {
-            border: 3px dashed #667eea;
-            border-radius: 12px;
-            padding: 50px 20px;
-            text-align: center;
-            background: #f8fafe;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .drop-area:hover {
-            border-color: #5a67d8;
-            background: #f0f7ff;
-        }
-
-        .drop-area.drag-over {
-            border-color: #38a169;
-            background: #f0fff4;
-            transform: scale(1.02);
+        .preview-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
         }
 
         .drop-area-content {
@@ -100,16 +84,23 @@
             font-size: 0.9em;
         }
 
-        .controls {
+        .right-panel {
             background: #f8f9fa;
-            padding: 20px;
             border-radius: 8px;
-            margin-bottom: 30px;
-            display: none;
+            padding: 20px;
+            text-align: center;
+            opacity: 0.5;
+        }
+
+        .right-panel.active {
+            opacity: 1;
         }
 
         .control-group {
-            margin-bottom: 20px;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 6px;
         }
 
         .control-group label {
@@ -154,11 +145,50 @@
             color: #667eea;
         }
 
-        .preview-section {
+        .left-panel {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            align-self: start;
+        }
+
+        .drop-area {
+            border: 3px dashed #667eea;
+            border-radius: 12px;
+            padding: 50px 20px;
+            text-align: center;
+            background: #f8fafe;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .drop-area:hover {
+            border-color: #5a67d8;
+            background: #f0f7ff;
+        }
+
+        .drop-area.drag-over {
+            border-color: #38a169;
+            background: #f0fff4;
+        }
+
+        .original-content {
             display: none;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-top: 30px;
+        }
+
+        .original-content.active {
+            display: block;
+        }
+
+        .original-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: block;
+            margin: 0 auto 15px auto;
         }
 
         .preview-card {
@@ -179,10 +209,26 @@
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             user-select: none;
+            display: block;
+            margin: 0 auto 15px auto;
         }
 
         .preview-image.comparing {
             cursor: pointer;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 300px;
+            border-radius: 8px;
+            background: #f0f0f0;
+            border: 2px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 1.1em;
+            margin-bottom: 15px;
         }
 
         .compare-hint {
@@ -262,49 +308,50 @@
         </div>
         
         <div class="main-content">
-            <div class="upload-section">
-                <div class="drop-area" id="dropArea">
-                    <div class="drop-area-content">
-                        <div class="drop-icon">📁</div>
-                        <div class="drop-text">Drop your image here</div>
-                        <div class="drop-subtext">or click to browse files</div>
-                    </div>
-                </div>
-                <input type="file" id="imageInput" accept="image/*" style="display: none;">
-            </div>
-
-            <div class="controls" id="controls">
-                <div class="control-group">
-                    <label for="qualitySlider">JPEG Quality</label>
-                    <input type="range" id="qualitySlider" class="quality-slider" min="1" max="100" value="80">
-                    <div class="quality-display" id="qualityDisplay">80%</div>
-                </div>
-            </div>
-
-            <div class="preview-section" id="previewSection">
-                <div class="preview-card">
+            <div class="preview-section">
+                <div class="left-panel">
                     <h3>Original Image</h3>
-                    <img id="originalImage" class="preview-image" alt="Original">
-                    <div class="file-info">
-                        <div>Format: <span id="originalFormat"></span></div>
-                        <div>Dimensions: <span id="originalDimensions"></span></div>
-                        <div class="size original">Size: <span id="originalSize"></span></div>
+                    <div class="drop-area" id="dropArea">
+                        <div class="drop-area-content" id="dropAreaContent">
+                            <div class="drop-icon">📁</div>
+                            <div class="drop-text">Drop your image here</div>
+                            <div class="drop-subtext">or click to browse files</div>
+                        </div>
+                    </div>
+                    <div class="original-content" id="originalContent">
+                        <img id="originalImage" class="original-image" alt="Original">
+                        <div class="file-info">
+                            <div>Format: <span id="originalFormat"></span></div>
+                            <div>Dimensions: <span id="originalDimensions"></span></div>
+                            <div class="size original">Size: <span id="originalSize"></span></div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="preview-card">
+                <div class="right-panel" id="rightPanel">
                     <h3>Optimized JPEG</h3>
-                    <img id="optimizedImage" class="preview-image" alt="Optimized">
-                    <div class="compare-hint">Click and hold to compare with original</div>
+                    <div class="image-placeholder" id="imagePlaceholder">
+                        Optimized image will appear here
+                    </div>
+                    <img id="optimizedImage" class="preview-image" alt="Optimized" style="display: none;">
+                    
                     <div class="file-info">
                         <div>Format: JPEG</div>
-                        <div>Dimensions: <span id="optimizedDimensions"></span></div>
-                        <div class="size optimized">Size: <span id="optimizedSize"></span></div>
-                        <div>Reduction: <span id="reduction"></span></div>
+                        <div>Dimensions: <span id="optimizedDimensions">-</span></div>
+                        <div class="size optimized">Size: <span id="optimizedSize">-</span></div>
+                        <div>Reduction: <span id="reduction">-</span></div>
                     </div>
-                    <button id="downloadBtn" class="download-btn">Download Optimized Image</button>
+                    
+                    <div class="control-group">
+                        <label for="qualitySlider">JPEG Quality</label>
+                        <input type="range" id="qualitySlider" class="quality-slider" min="1" max="100" value="80">
+                        <div class="quality-display" id="qualityDisplay">80%</div>
+                    </div>
+                    
+                    <button id="downloadBtn" class="download-btn" disabled>Download Optimized Image</button>
                 </div>
             </div>
+            <input type="file" id="imageInput" accept="image/*" style="display: none;">
         </div>
     </div>
 
@@ -402,7 +449,14 @@
 
             displayOriginalImage() {
                 const originalImg = document.getElementById('originalImage');
+                const dropArea = document.getElementById('dropArea');
+                const originalContent = document.getElementById('originalContent');
+                
                 originalImg.src = this.originalImage.src;
+                
+                // Hide entire drop area and show original preview
+                dropArea.style.display = 'none';
+                originalContent.classList.add('active');
                 
                 document.getElementById('originalFormat').textContent = this.currentFile.type.split('/')[1].toUpperCase();
                 document.getElementById('originalDimensions').textContent = `${this.originalImage.width} × ${this.originalImage.height}`;
@@ -410,8 +464,7 @@
             }
 
             showControls() {
-                document.getElementById('controls').style.display = 'block';
-                document.getElementById('previewSection').style.display = 'grid';
+                document.getElementById('rightPanel').classList.add('active');
             }
 
             updateQuality(quality) {
@@ -438,9 +491,14 @@
 
             displayOptimizedImage(blob) {
                 const optimizedImg = document.getElementById('optimizedImage');
+                const placeholder = document.getElementById('imagePlaceholder');
                 const url = URL.createObjectURL(blob);
                 
                 optimizedImg.src = url;
+                
+                // Hide placeholder and show image
+                placeholder.style.display = 'none';
+                optimizedImg.style.display = 'block';
                 
                 document.getElementById('optimizedDimensions').textContent = `${this.canvas.width} × ${this.canvas.height}`;
                 document.getElementById('optimizedSize').textContent = this.formatFileSize(blob.size);
