@@ -178,6 +178,23 @@
             max-height: 300px;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            user-select: none;
+        }
+
+        .preview-image.comparing {
+            cursor: pointer;
+        }
+
+        .compare-hint {
+            font-size: 0.8em;
+            color: #718096;
+            margin-top: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .preview-card:hover .compare-hint {
+            opacity: 1;
         }
 
         .file-info {
@@ -278,6 +295,7 @@
                 <div class="preview-card">
                     <h3>Optimized JPEG</h3>
                     <img id="optimizedImage" class="preview-image" alt="Optimized">
+                    <div class="compare-hint">Click and hold to compare with original</div>
                     <div class="file-info">
                         <div>Format: JPEG</div>
                         <div>Dimensions: <span id="optimizedDimensions"></span></div>
@@ -432,7 +450,45 @@
                 
                 // Store the blob for download
                 this.optimizedBlob = blob;
+                this.optimizedImageUrl = url;
                 document.getElementById('downloadBtn').disabled = false;
+                
+                // Add comparison functionality
+                this.setupImageComparison(optimizedImg);
+            }
+
+            setupImageComparison(optimizedImg) {
+                // Remove existing event listeners if any
+                optimizedImg.removeEventListener('mousedown', this.startComparison);
+                optimizedImg.removeEventListener('mouseup', this.endComparison);
+                optimizedImg.removeEventListener('mouseleave', this.endComparison);
+                optimizedImg.removeEventListener('touchstart', this.startComparison);
+                optimizedImg.removeEventListener('touchend', this.endComparison);
+
+                // Bind methods to preserve 'this' context
+                this.startComparison = this.startComparison.bind(this);
+                this.endComparison = this.endComparison.bind(this);
+
+                // Add event listeners
+                optimizedImg.addEventListener('mousedown', this.startComparison);
+                optimizedImg.addEventListener('mouseup', this.endComparison);
+                optimizedImg.addEventListener('mouseleave', this.endComparison);
+                optimizedImg.addEventListener('touchstart', this.startComparison);
+                optimizedImg.addEventListener('touchend', this.endComparison);
+            }
+
+            startComparison(e) {
+                e.preventDefault();
+                const optimizedImg = document.getElementById('optimizedImage');
+                optimizedImg.src = this.originalImage.src;
+                optimizedImg.classList.add('comparing');
+            }
+
+            endComparison(e) {
+                e.preventDefault();
+                const optimizedImg = document.getElementById('optimizedImage');
+                optimizedImg.src = this.optimizedImageUrl;
+                optimizedImg.classList.remove('comparing');
             }
 
             downloadOptimizedImage() {
