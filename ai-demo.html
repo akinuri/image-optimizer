@@ -366,6 +366,7 @@
                 this.originalImage = null;
                 this.canvas = document.createElement('canvas');
                 this.ctx = this.canvas.getContext('2d');
+                this.debounceTimer = null;
                 
                 this.initializeEventListeners();
             }
@@ -409,7 +410,7 @@
                 });
 
                 document.getElementById('qualitySlider').addEventListener('input', (e) => {
-                    this.updateQuality(parseInt(e.target.value));
+                    this.updateQualityWithDebounce(parseInt(e.target.value));
                 });
 
                 document.getElementById('downloadBtn').addEventListener('click', () => {
@@ -474,6 +475,22 @@
             updateQuality(quality) {
                 document.getElementById('qualityDisplay').textContent = `${quality}%`;
                 this.optimizeImage();
+            }
+
+            updateQualityWithDebounce(quality) {
+                // Update display immediately for responsive feel
+                document.getElementById('qualityDisplay').textContent = `${quality}%`;
+                
+                // Clear existing timer
+                if (this.debounceTimer) {
+                    clearTimeout(this.debounceTimer);
+                }
+                
+                // Set new timer for optimization
+                this.debounceTimer = setTimeout(() => {
+                    this.optimizeImage();
+                    this.debounceTimer = null;
+                }, 100);
             }
 
             optimizeImage() {
