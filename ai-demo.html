@@ -60,7 +60,6 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
-            margin-top: 30px;
         }
 
         .drop-area-content {
@@ -156,12 +155,16 @@
         .drop-area {
             border: 3px dashed #667eea;
             border-radius: 12px;
-            padding: 50px 20px;
+            height: 300px;
+            padding: 20px;
             text-align: center;
             background: #f8fafe;
             transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .drop-area:hover {
@@ -184,7 +187,7 @@
 
         .original-image {
             max-width: 100%;
-            max-height: 300px;
+            max-height: 400px;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             display: block;
@@ -205,7 +208,7 @@
 
         .preview-image {
             max-width: 100%;
-            max-height: 300px;
+            max-height: 400px;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             user-select: none;
@@ -320,11 +323,12 @@
                     </div>
                     <div class="original-content" id="originalContent">
                         <img id="originalImage" class="original-image" alt="Original">
-                        <div class="file-info">
-                            <div>Format: <span id="originalFormat"></span></div>
-                            <div>Dimensions: <span id="originalDimensions"></span></div>
-                            <div class="size original">Size: <span id="originalSize"></span></div>
-                        </div>
+                    </div>
+                    
+                    <div class="file-info">
+                        <div>Format: <span id="originalFormat">-</span></div>
+                        <div>Dimensions: <span id="originalDimensions">-</span></div>
+                        <div class="size original">Size: <span id="originalSize">-</span></div>
                     </div>
                 </div>
 
