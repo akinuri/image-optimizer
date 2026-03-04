@@ -945,6 +945,15 @@
                             }
                         }
                     });
+
+                    // Mouse hover events for image switching
+                    photoViewerImage.addEventListener("mousemove", (e) => {
+                        this.handlePhotoViewerMouseMove(e);
+                    });
+
+                    photoViewerImage.addEventListener("mouseleave", () => {
+                        this.handlePhotoViewerMouseLeave();
+                    });
                 }
 
                 openPhotoViewer(imageType) {
@@ -982,6 +991,44 @@
 
                     this.currentViewerImage = images[currentIndex];
                     this.updateViewerImage();
+                }
+
+                handlePhotoViewerMouseMove(e) {
+                    if (!this.originalImage || !this.optimizedImageUrl) return;
+
+                    const rect = e.target.getBoundingClientRect();
+                    const mouseX = e.clientX - rect.left;
+                    const width = rect.width;
+                    const position = mouseX / width;
+
+                    let targetImage;
+                    if (this.diffMode) {
+                        // Divide into three zones
+                        if (position < 0.33) {
+                            targetImage = "original";
+                        } else if (position < 0.67) {
+                            targetImage = "optimized";
+                        } else {
+                            targetImage = "diff";
+                        }
+                    } else {
+                        // Divide into two zones
+                        if (position < 0.5) {
+                            targetImage = "original";
+                        } else {
+                            targetImage = "optimized";
+                        }
+                    }
+
+                    if (targetImage !== this.currentViewerImage) {
+                        this.currentViewerImage = targetImage;
+                        this.updateViewerImage();
+                    }
+                }
+
+                handlePhotoViewerMouseLeave() {
+                    // Optionally, you can reset to the original image type when mouse leaves
+                    // For now, we'll keep the last hovered image
                 }
 
                 updateViewerImage() {
