@@ -665,7 +665,7 @@
                 }
 
                 showDiffImage() {
-                    // Simulate 'divide' blend mode and enhance brightness/contrast
+                    // Use difference blend mode
                     if (!this.originalImage || !this.optimizedImageDataUrl) return;
                     const w = this.originalImage.width;
                     const h = this.originalImage.height;
@@ -691,16 +691,13 @@
                         const opt = optimizedData.data;
                         const out = outputData.data;
                         // Brightness and contrast settings
-                        const brightness = 40; // add to each channel
-                        const contrast = 1.5; // multiply after centering
+                        const brightness = 125; // add to each channel
+                        const contrast = 4; // multiply after centering
 
                         for (let i = 0; i < orig.length; i += 4) {
                             for (let c = 0; c < 3; ++c) {
-                                // Simulate divide blend (avoid div by zero)
-                                let v =
-                                    opt[i + c] === 0
-                                        ? 255
-                                        : Math.min(255, Math.round((orig[i + c] / opt[i + c]) * 255));
+                                // Calculate difference blend mode: |original - optimized|
+                                let v = Math.abs(orig[i + c] - opt[i + c]);
                                 // Brightness
                                 v = v + brightness;
                                 // Contrast
