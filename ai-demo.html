@@ -101,7 +101,6 @@
 
             .control-group label {
                 display: block;
-                margin-bottom: 8px;
                 font-weight: 600;
                 color: #333;
             }
@@ -353,6 +352,10 @@
                                 value="80"
                             />
                             <div class="quality-display" id="qualityDisplay">80%</div>
+                            <div style="margin-top: 15px; text-align: left; display: flex; align-items: center; gap: 5px">
+                                <input type="checkbox" id="diffCheckbox" />
+                                <label for="diffCheckbox">Diff View</label>
+                            </div>
                         </div>
 
                         <button id="downloadBtn" class="download-btn" disabled>Download Optimized Image</button>
@@ -370,7 +373,10 @@
                     this.canvas = document.createElement("canvas");
                     this.ctx = this.canvas.getContext("2d");
                     this.debounceTimer = null;
-
+                    this.diffMode = false;
+                    this.optimizedBlob = null;
+                    this.optimizedImageUrl = null;
+                    this.optimizedImageDataUrl = null;
                     this.initializeEventListeners();
                 }
 
@@ -430,6 +436,11 @@
 
                     document.getElementById("downloadBtn").addEventListener("click", () => {
                         this.downloadOptimizedImage();
+                    });
+
+                    document.getElementById("diffCheckbox").addEventListener("change", (e) => {
+                        this.diffMode = e.target.checked;
+                        this.updateDiffMode();
                     });
                 }
 
@@ -525,7 +536,13 @@
                     // Convert to JPEG with specified quality
                     this.canvas.toBlob(
                         (blob) => {
-                            this.displayOptimizedImage(blob);
+                            // Also store a dataURL for diff mode
+                            const reader = new FileReader();
+                            reader.onload = () => {
+                                this.optimizedImageDataUrl = reader.result;
+                                this.displayOptimizedImage(blob);
+                            };
+                            reader.readAsDataURL(blob);
                         },
                         "image/jpeg",
                         quality,
@@ -538,7 +555,15 @@
                     const optimizedSizeElement = document.querySelector(".size.optimized");
                     const url = URL.createObjectURL(blob);
 
-                    optimizedImg.src = url;
+                    // Store for diff mode
+                    this.optimizedImageUrl = url;
+
+                    // If diff mode is active, show diff image
+                    if (this.diffMode) {
+                        this.showDiffImage();
+                    } else {
+                        optimizedImg.src = url;
+                    }
 
                     // Hide placeholder and show image
                     placeholder.style.display = "none";
@@ -561,7 +586,6 @@
 
                     // Store the blob for download
                     this.optimizedBlob = blob;
-                    this.optimizedImageUrl = url;
                     document.getElementById("downloadBtn").disabled = false;
 
                     // Add comparison functionality
@@ -598,7 +622,11 @@
                 endComparison(e) {
                     e.preventDefault();
                     const optimizedImg = document.getElementById("optimizedImage");
-                    optimizedImg.src = this.optimizedImageUrl;
+                    if (this.diffMode) {
+                        this.showDiffImage();
+                    } else {
+                        optimizedImg.src = this.optimizedImageUrl;
+                    }
                     optimizedImg.classList.remove("comparing");
                 }
 
@@ -625,6 +653,68 @@
                     const i = Math.floor(Math.log(bytes) / Math.log(k));
 
                     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+                }
+
+                updateDiffMode() {
+                    const optimizedImg = document.getElementById("optimizedImage");
+                    if (this.diffMode) {
+                        this.showDiffImage();
+                    } else {
+                        optimizedImg.src = this.optimizedImageUrl;
+                    }
+                }
+
+                showDiffImage() {
+                    // Simulate 'divide' blend mode and enhance brightness/contrast
+                    if (!this.originalImage || !this.optimizedImageDataUrl) return;
+                    const w = this.originalImage.width;
+                    const h = this.originalImage.height;
+                    const tempCanvas = document.createElement("canvas");
+                    tempCanvas.width = w;
+                    tempCanvas.height = h;
+                    const tempCtx = tempCanvas.getContext("2d");
+
+                    // Draw original
+                    tempCtx.drawImage(this.originalImage, 0, 0, w, h);
+                    const originalData = tempCtx.getImageData(0, 0, w, h);
+
+                    // Draw optimized
+                    const optimizedImgObj = new window.Image();
+                    optimizedImgObj.onload = () => {
+                        tempCtx.clearRect(0, 0, w, h);
+                        tempCtx.drawImage(optimizedImgObj, 0, 0, w, h);
+                        const optimizedData = tempCtx.getImageData(0, 0, w, h);
+
+                        // Prepare output
+                        const outputData = tempCtx.createImageData(w, h);
+                        const orig = originalData.data;
+                        const opt = optimizedData.data;
+                        const out = outputData.data;
+                        // Brightness and contrast settings
+                        const brightness = 40; // add to each channel
+                        const contrast = 1.5; // multiply after centering
+
+                        for (let i = 0; i < orig.length; i += 4) {
+                            for (let c = 0; c < 3; ++c) {
+                                // Simulate divide blend (avoid div by zero)
+                                let v =
+                                    opt[i + c] === 0
+                                        ? 255
+                                        : Math.min(255, Math.round((orig[i + c] / opt[i + c]) * 255));
+                                // Brightness
+                                v = v + brightness;
+                                // Contrast
+                                v = (v - 128) * contrast + 128;
+                                // Clamp
+                                out[i + c] = Math.max(0, Math.min(255, v));
+                            }
+                            out[i + 3] = 255; // alpha
+                        }
+                        tempCtx.putImageData(outputData, 0, 0);
+                        const diffDataUrl = tempCanvas.toDataURL("image/png");
+                        document.getElementById("optimizedImage").src = diffDataUrl;
+                    };
+                    optimizedImgObj.src = this.optimizedImageDataUrl;
                 }
             }
 
