@@ -168,10 +168,16 @@
 
             .original-content {
                 display: none;
+                transition: all 0.3s ease;
             }
 
             .original-content.active {
                 display: block;
+            }
+
+            .original-content.drag-over {
+                background: #f0fff4;
+                border-radius: 8px;
             }
 
             .original-image {
@@ -570,6 +576,7 @@
 
                 initializeEventListeners() {
                     const dropArea = document.getElementById("dropArea");
+                    const originalContent = document.getElementById("originalContent");
                     const fileInput = document.getElementById("imageInput");
 
                     // File input change event
@@ -577,46 +584,9 @@
                         this.handleFileSelect(e.target.files[0]);
                     });
 
-                    // Drag and drop events
-                    ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
-                        dropArea.addEventListener(eventName, this.preventDefaults, false);
-                    });
-
-                    ["dragenter", "dragover"].forEach((eventName) => {
-                        dropArea.addEventListener(
-                            eventName,
-                            () => {
-                                dropArea.classList.add("drag-over");
-                            },
-                            false,
-                        );
-                    });
-
-                    ["dragleave", "drop"].forEach((eventName) => {
-                        dropArea.addEventListener(
-                            eventName,
-                            () => {
-                                dropArea.classList.remove("drag-over");
-                            },
-                            false,
-                        );
-                    });
-
-                    dropArea.addEventListener(
-                        "drop",
-                        (e) => {
-                            const files = e.dataTransfer.files;
-                            if (files.length > 0) {
-                                this.handleFileSelect(files[0]);
-                            }
-                        },
-                        false,
-                    );
-
-                    // Click to browse
-                    dropArea.addEventListener("click", () => {
-                        fileInput.click();
-                    });
+                    // Setup drag and drop for both drop area and original content
+                    this.setupDragAndDrop(dropArea);
+                    this.setupDragAndDrop(originalContent);
 
                     document.getElementById("qualitySlider").addEventListener("input", (e) => {
                         this.updateQualityWithDebounce(parseInt(e.target.value));
@@ -637,6 +607,51 @@
 
                     // Photo viewer event listeners
                     this.setupPhotoViewer();
+                }
+
+                setupDragAndDrop(element) {
+                    // Drag and drop events
+                    ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+                        element.addEventListener(eventName, this.preventDefaults, false);
+                    });
+
+                    ["dragenter", "dragover"].forEach((eventName) => {
+                        element.addEventListener(
+                            eventName,
+                            () => {
+                                element.classList.add("drag-over");
+                            },
+                            false,
+                        );
+                    });
+
+                    ["dragleave", "drop"].forEach((eventName) => {
+                        element.addEventListener(
+                            eventName,
+                            () => {
+                                element.classList.remove("drag-over");
+                            },
+                            false,
+                        );
+                    });
+
+                    element.addEventListener(
+                        "drop",
+                        (e) => {
+                            const files = e.dataTransfer.files;
+                            if (files.length > 0) {
+                                this.handleFileSelect(files[0]);
+                            }
+                        },
+                        false,
+                    );
+
+                    // Click to browse (only for drop area, not original content)
+                    if (element.id === "dropArea") {
+                        element.addEventListener("click", () => {
+                            document.getElementById("imageInput").click();
+                        });
+                    }
                 }
 
                 preventDefaults(e) {
