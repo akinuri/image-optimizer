@@ -271,6 +271,27 @@
                 cursor: not-allowed;
             }
 
+            .reset-btn {
+                background: #e53e3e;
+                color: white;
+                border: none;
+                padding: 8px 20px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 0.9em;
+                margin-top: 15px;
+                transition: background 0.3s;
+            }
+
+            .reset-btn:hover {
+                background: #c53030;
+            }
+
+            .reset-btn:disabled {
+                background: #a0aec0;
+                cursor: not-allowed;
+            }
+
             /* Photo Viewer Styles */
             .photo-viewer {
                 display: none;
@@ -453,6 +474,8 @@
                             <div>Dimensions: <span id="originalDimensions">-</span></div>
                             <div class="size original">Size: <span id="originalSize">-</span></div>
                         </div>
+                        
+                        <button id="resetBtn" class="reset-btn" disabled>Reset</button>
                     </div>
 
                     <div class="right-panel" id="rightPanel">
@@ -581,6 +604,10 @@
                         this.downloadOptimizedImage();
                     });
 
+                    document.getElementById("resetBtn").addEventListener("click", () => {
+                        this.resetState();
+                    });
+
                     document.getElementById("diffCheckbox").addEventListener("change", (e) => {
                         this.diffMode = e.target.checked;
                         this.updateDiffMode();
@@ -628,12 +655,14 @@
                     const originalImg = document.getElementById("originalImage");
                     const dropArea = document.getElementById("dropArea");
                     const originalContent = document.getElementById("originalContent");
+                    const resetBtn = document.getElementById("resetBtn");
 
                     originalImg.src = this.originalImage.src;
 
                     // Hide entire drop area and show original preview
                     dropArea.style.display = "none";
                     originalContent.classList.add("active");
+                    resetBtn.disabled = false;
 
                     // Make original image clickable for photo viewer
                     originalImg.classList.add("click-to-view");
@@ -829,6 +858,63 @@
                     const i = Math.floor(Math.log(bytes) / Math.log(k));
 
                     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+                }
+
+                resetState() {
+                    // Reset all state variables
+                    this.currentFile = null;
+                    this.originalImage = null;
+                    this.optimizedBlob = null;
+                    this.optimizedImageUrl = null;
+                    
+                    // Clear debounce timer
+                    if (this.debounceTimer) {
+                        clearTimeout(this.debounceTimer);
+                        this.debounceTimer = null;
+                    }
+
+                    // Reset UI elements
+                    const dropArea = document.getElementById("dropArea");
+                    const originalContent = document.getElementById("originalContent");
+                    const resetBtn = document.getElementById("resetBtn");
+                    const rightPanel = document.getElementById("rightPanel");
+                    const imagePlaceholder = document.getElementById("imagePlaceholder");
+                    const optimizedImage = document.getElementById("optimizedImage");
+                    const downloadBtn = document.getElementById("downloadBtn");
+                    const qualitySlider = document.getElementById("qualitySlider");
+                    const qualityDisplay = document.getElementById("qualityDisplay");
+
+                    // Show drop area, hide original content
+                    dropArea.style.display = "flex";
+                    originalContent.classList.remove("active");
+                    resetBtn.disabled = true;
+
+                    // Reset right panel
+                    rightPanel.classList.remove("active");
+                    imagePlaceholder.style.display = "flex";
+                    optimizedImage.style.display = "none";
+                    downloadBtn.disabled = true;
+
+                    // Reset quality slider to default
+                    qualitySlider.value = "80";
+                    qualityDisplay.textContent = "80%";
+
+                    // Reset file info displays
+                    document.getElementById("originalFormat").textContent = "-";
+                    document.getElementById("originalDimensions").textContent = "-";
+                    document.getElementById("originalSize").textContent = "-";
+                    document.getElementById("optimizedDimensions").textContent = "-";
+                    document.getElementById("optimizedSize").textContent = "-";
+                    document.getElementById("reduction").textContent = "-";
+
+                    // Clear file input
+                    document.getElementById("imageInput").value = "";
+
+                    // Clean up any size comparison classes
+                    const optimizedSizeElement = document.querySelector('.size.optimized');
+                    if (optimizedSizeElement) {
+                        optimizedSizeElement.classList.remove('bigger', 'smaller');
+                    }
                 }
 
                 updateDiffMode() {
