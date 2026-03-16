@@ -4,6 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Image Optimizer</title>
+        <script src="https://cdn.tailwindcss.com"></script>
         <style>
             * {
                 margin: 0;
@@ -20,7 +21,7 @@
             }
 
             .container {
-                max-width: 1920px;
+                max-width: 1920px !important;
                 margin: 0 auto;
                 background: white;
                 border-radius: 12px;
@@ -83,37 +84,40 @@
             }
 
             .control-group label {
-                display: block;
-                font-weight: 600;
-                color: #333;
+                display: block !important;
+                font-weight: 600 !important;
+                color: #333 !important;
+                margin-bottom: 8px !important;
             }
 
             .quality-slider {
-                width: 100%;
-                height: 6px;
-                border-radius: 3px;
-                background: #ddd;
-                outline: none;
-                -webkit-appearance: none;
+                width: 100% !important;
+                height: 6px !important;
+                border-radius: 3px !important;
+                background: #ddd !important;
+                outline: none !important;
+                -webkit-appearance: none !important;
+                appearance: none !important;
             }
 
             .quality-slider::-webkit-slider-thumb {
-                -webkit-appearance: none;
-                appearance: none;
-                width: 24px;
-                height: 24px;
-                border-radius: 50%;
-                background: #667eea;
-                cursor: pointer;
+                -webkit-appearance: none !important;
+                appearance: none !important;
+                width: 24px !important;
+                height: 24px !important;
+                border-radius: 50% !important;
+                background: #667eea !important;
+                cursor: pointer !important;
+                border: none !important;
             }
 
             .quality-slider::-moz-range-thumb {
-                width: 24px;
-                height: 24px;
-                border-radius: 50%;
-                background: #667eea;
-                cursor: pointer;
-                border: none;
+                width: 24px !important;
+                height: 24px !important;
+                border-radius: 50% !important;
+                background: #667eea !important;
+                cursor: pointer !important;
+                border: none !important;
             }
 
             .quality-display {
@@ -181,8 +185,18 @@
             }
 
             .preview-card h3 {
-                margin-bottom: 15px;
-                color: #333;
+                margin-bottom: 15px !important;
+                color: #333 !important;
+                font-size: 1.125rem !important;
+                font-weight: 600 !important;
+            }
+
+            .left-panel h3,
+            .right-panel h3 {
+                margin-bottom: 15px !important;
+                color: #333 !important;
+                font-size: 1.125rem !important;
+                font-weight: 600 !important;
             }
 
             .preview-image {
@@ -251,45 +265,47 @@
             }
 
             .download-btn {
-                background: #38a169;
-                color: white;
-                border: none;
-                padding: 12px 24px;
-                border-radius: 6px;
-                cursor: pointer;
-                font-size: 1em;
-                margin-top: 15px;
-                transition: background 0.3s;
+                background: #38a169 !important;
+                color: white !important;
+                border: none !important;
+                padding: 12px 24px !important;
+                border-radius: 6px !important;
+                cursor: pointer !important;
+                font-size: 1em !important;
+                margin-top: 15px !important;
+                transition: background 0.3s !important;
+                font-family: inherit !important;
             }
 
             .download-btn:hover {
-                background: #2f855a;
+                background: #2f855a !important;
             }
 
             .download-btn:disabled {
-                background: #a0aec0;
-                cursor: not-allowed;
+                background: #a0aec0 !important;
+                cursor: not-allowed !important;
             }
 
             .reset-btn {
-                background: #e53e3e;
-                color: white;
-                border: none;
-                padding: 8px 20px;
-                border-radius: 6px;
-                cursor: pointer;
-                font-size: 0.9em;
-                margin-top: 15px;
-                transition: background 0.3s;
+                background: #e53e3e !important;
+                color: white !important;
+                border: none !important;
+                padding: 8px 20px !important;
+                border-radius: 6px !important;
+                cursor: pointer !important;
+                font-size: 0.9em !important;
+                margin-top: 15px !important;
+                transition: background 0.3s !important;
+                font-family: inherit !important;
             }
 
             .reset-btn:hover {
-                background: #c53030;
+                background: #c53030 !important;
             }
 
             .reset-btn:disabled {
-                background: #a0aec0;
-                cursor: not-allowed;
+                background: #a0aec0 !important;
+                cursor: not-allowed !important;
             }
 
             /* Photo Viewer Styles */
@@ -330,22 +346,23 @@
                 position: absolute;
                 top: 50%;
                 transform: translateY(-50%);
-                background: rgba(255, 255, 255, 0.6);
-                border: none;
-                border-radius: 50%;
-                width: 50px;
-                height: 50px;
-                cursor: pointer;
-                font-size: 20px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.3s ease;
+                background: rgba(255, 255, 255, 0.6) !important;
+                border: none !important;
+                border-radius: 50% !important;
+                width: 50px !important;
+                height: 50px !important;
+                cursor: pointer !important;
+                font-size: 20px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                transition: all 0.3s ease !important;
+                color: #333 !important;
             }
 
             .photo-viewer-nav:hover {
-                background: rgba(255, 255, 255, 0.8);
-                transform: translateY(-50%);
+                background: rgba(255, 255, 255, 0.8) !important;
+                transform: translateY(-50%) !important;
             }
 
             .photo-viewer-nav.prev {
@@ -360,26 +377,26 @@
                 position: absolute;
                 top: 15px;
                 right: 15px;
-                background: rgba(128, 128, 128, 0.8);
+                background: rgba(128, 128, 128, 0.8) !important;
                 backdrop-filter: blur(10px);
                 -webkit-backdrop-filter: blur(10px);
-                border: none;
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-                cursor: pointer;
-                font-size: 18px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.3s ease;
-                color: white;
+                border: none !important;
+                border-radius: 50% !important;
+                width: 40px !important;
+                height: 40px !important;
+                cursor: pointer !important;
+                font-size: 18px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                transition: all 0.3s ease !important;
+                color: white !important;
                 text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             }
 
             .photo-viewer-close:hover {
-                background: rgba(96, 96, 96, 0.9);
+                background: rgba(96, 96, 96, 0.9) !important;
                 box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
             }
 
@@ -512,7 +529,7 @@
                         <button id="downloadBtn" class="download-btn" disabled>Download</button>
                     </div>
                 </div>
-                <input type="file" id="imageInput" accept="image/*" style="display: none" />
+                <input type="file" id="imageInput" accept="image/*" style="display: none !important;" />
             </div>
         </div>
 
