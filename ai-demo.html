@@ -683,6 +683,15 @@
                 setupGlobalDragDetection() {
                     let dragCounter = 0;
 
+                    // Prevent default browser behavior for all drag/drop operations
+                    document.addEventListener("dragover", (e) => {
+                        e.preventDefault();
+                    });
+
+                    document.addEventListener("drop", (e) => {
+                        e.preventDefault();
+                    });
+
                     // Detect when files are dragged over the page
                     document.addEventListener("dragenter", (e) => {
                         // Only respond to file drags
