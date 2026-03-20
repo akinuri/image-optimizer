@@ -78,30 +78,32 @@
                 gap: 3rem;
             }
 
-            .dimensions-control {
-                width: 100%;
-            }
-
             .dimensions-inputs {
-                display: flex;
-                gap: 15px;
-                margin-top: 10px;
-                margin-bottom: 10px;
+                display: block;
+                margin-bottom: 15px;
             }
 
             .dimension-input {
-                flex: 1;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 10px;
+            }
+
+            .dimension-input:last-child {
+                margin-bottom: 0;
             }
 
             .dimension-input label {
                 font-size: 0.9em !important;
-                margin-bottom: 5px !important;
                 color: #666 !important;
+                white-space: nowrap !important;
+                margin: 0 !important;
             }
 
             .dimension-field {
-                width: 100% !important;
-                padding: 8px 12px !important;
+                width: 100px !important;
+                padding: 6px 10px !important;
                 border: 2px solid #e2e8f0 !important;
                 border-radius: 4px !important;
                 font-size: 14px !important;
@@ -115,7 +117,8 @@
             }
 
             .dimension-reset {
-                text-align: center;
+                text-align: left;
+                margin-top: 5px;
             }
 
             .reset-dimensions-btn {
@@ -592,12 +595,14 @@
                             <div>Reduction: <span id="reduction">-</span></div>
                         </div>
 
+
+
                         <div class="control-group">
                             <div class="dimensions-control">
                                 <label>Dimensions (px)</label>
                                 <div class="dimensions-inputs">
                                     <div class="dimension-input">
-                                        <label for="widthInput">Width</label>
+                                        <label for="widthInput">Width:</label>
                                         <input type="number" id="widthInput" class="dimension-field" list="widthSuggestions" min="1" placeholder="Auto" />
                                         <datalist id="widthSuggestions">
                                             <option value="500"></option>
@@ -613,7 +618,7 @@
                                         </datalist>
                                     </div>
                                     <div class="dimension-input">
-                                        <label for="heightInput">Height</label>
+                                        <label for="heightInput">Height:</label>
                                         <input type="number" id="heightInput" class="dimension-field" list="heightSuggestions" min="1" placeholder="Auto" />
                                         <datalist id="heightSuggestions">
                                             <option value="480"></option>
@@ -629,12 +634,9 @@
                                     </div>
                                 </div>
                                 <div class="dimension-reset">
-                                    <button id="resetDimensions" class="reset-dimensions-btn">Reset to Original</button>
+                                    <button id="resetDimensions" class="reset-dimensions-btn">Reset</button>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="control-group">
                             <div class="quality-control">
                                 <label for="qualitySlider">JPEG Quality</label>
                                 <input
